@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Status dos BIs</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin-bottom: 10px; }
+    .ok { background-color: #e0ffe0; }
+    .erro { background-color: #ffe0e0; }
+  </style>
+</head>
+<body>
+  <h1>Status dos Relatórios Power BI</h1>
+  <div id="status-container">Carregando...</div>
+
+  <script>
+    fetch('https://powerbi-status-api.onrender.com/status.json')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('status-container');
+        container.innerHTML = '';
+
+        data.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'card ' + (item.status === 'Erro' ? 'erro' : 'ok');
+          card.innerHTML = `
+            <h3>${item.nome}</h3>
+            <p>Status: <strong>${item.status}</strong></p>
+            <p>Última Atualização: ${new Date(item.data_atualizacao).toLocaleString('pt-BR')}</p>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        document.getElementById('status-container').innerText = 'Erro ao carregar dados.';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
