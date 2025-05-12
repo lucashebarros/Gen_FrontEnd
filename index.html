@@ -15,22 +15,32 @@
   <div id="status-container">Carregando...</div>
 
 <script>
-fetch("https://gen-backend-mx52.onrender.com")  // URL do backend no Render
+fetch("https://gen-backend-mx52.onrender.com/status") // Agora chamando corretamente o backend
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        const lista = document.getElementById("workspaces");
-        lista.innerHTML = ""; // Limpa antes de adicionar
+        const container = document.getElementById("status-container");
+        container.innerHTML = ""; // Limpa "Carregando..."
+        
+        if (!data.workspaces || data.workspaces.length === 0) {
+            container.innerHTML = "<p>Nenhum workspace encontrado.</p>";
+            return;
+        }
+
+        const lista = document.createElement("ul");
         data.workspaces.forEach(ws => {
             const item = document.createElement("li");
             item.textContent = `${ws.workspace} → ${ws.dataset} | Status: ${ws.status} | Última Atualização: ${ws.lastRefresh}`;
             lista.appendChild(item);
         });
-    })
-    .catch(error => console.error("Erro ao buscar dados:", error));
-</script>
 
-<ul id="workspaces"></ul>
+        container.appendChild(lista); // Adiciona ao DOM
+    })
+    .catch(error => {
+        console.error("Erro ao buscar dados:", error);
+        document.getElementById("status-container").innerHTML = "<p>Erro ao carregar os dados.</p>";
+    });
+</script>
 
 </body>
 </html>
