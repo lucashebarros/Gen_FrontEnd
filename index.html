@@ -14,28 +14,23 @@
   <h1>Status dos Relatórios Power BI</h1>
   <div id="status-container">Carregando...</div>
 
-  <script>
-    fetch('https://gen-backend-mx52.onrender.com/status.json')
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('status-container');
-        container.innerHTML = '';
-
-        data.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card ' + (item.status === 'Erro' ? 'erro' : 'ok');
-          card.innerHTML = `
-            <h3>${item.nome}</h3>
-            <p>Status: <strong>${item.status}</strong></p>
-            <p>Última Atualização: ${new Date(item.data_atualizacao).toLocaleString('pt-BR')}</p>
-          `;
-          container.appendChild(card);
+<script>
+fetch("https://seu-projeto.onrender.com/status")  // URL do backend no Render
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        const lista = document.getElementById("workspaces");
+        lista.innerHTML = ""; // Limpa antes de adicionar
+        data.workspaces.forEach(ws => {
+            const item = document.createElement("li");
+            item.textContent = `${ws.workspace} → ${ws.dataset} | Status: ${ws.status} | Última Atualização: ${ws.lastRefresh}`;
+            lista.appendChild(item);
         });
-      })
-      .catch(err => {
-        document.getElementById('status-container').innerText = 'Erro ao carregar dados.';
-        console.error(err);
-      });
-  </script>
+    })
+    .catch(error => console.error("Erro ao buscar dados:", error));
+</script>
+
+<ul id="workspaces"></ul>
+
 </body>
 </html>
