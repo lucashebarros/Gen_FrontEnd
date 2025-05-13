@@ -80,7 +80,7 @@
             const json = await response.json();
             const dados = json.data;
             const dataUTC = new Date(json.ultimaColeta);
-            const dataLocal = new Date(dataUTC.getTime() - 3 * 60 * 60 * 1000); // Ajuste de -3h
+            const dataLocal = new Date(dataUTC.getTime() * 60 * 60 * 1000); // Ajuste de -3h
             const dataFormatada = dataLocal.toLocaleString("pt-BR", {
                 day: "2-digit",
                 month: "2-digit",
