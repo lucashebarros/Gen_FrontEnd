@@ -6,7 +6,7 @@
   <title>Status dos Dashboards</title>
   <style>
     h1 {
-        text-align:center
+      text-align: center;
     }
     body {
       font-family: Arial, sans-serif;
@@ -20,7 +20,12 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      justify-content: center;
       margin-bottom: 30px;
+    }
+    .falha-wrapper {
+      text-align: center;
+      position: relative;
     }
     .falha-botao {
       border: none;
@@ -36,6 +41,22 @@
     }
     .falha-botao:hover {
       transform: scale(1.1);
+    }
+    .erro-detalhe {
+      display: none;
+      margin-top: 8px;
+      background-color: #ffe6e6;
+      color: #a00;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      max-width: 200px;
+      border: 1px solid #f5c2c7;
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
     }
     h2 {
       margin-top: 40px;
@@ -97,19 +118,32 @@
         contentDiv.innerHTML = '';
         falhasDiv.innerHTML = '';
 
-        // Mostrar falhas como botões
+        // Mostrar falhas como círculos clicáveis com tooltip abaixo
         dados.filter(d => d.status === "Failed").forEach(falha => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'falha-wrapper';
+
           const btn = document.createElement('button');
           btn.className = 'falha-botao';
           btn.textContent = falha.dataset?.slice(0, 6) || 'Falha';
           btn.title = falha.dataset;
 
+          const erroBox = document.createElement('div');
+          erroBox.className = 'erro-detalhe';
+          erroBox.textContent = falha.errorMessage || "Sem mensagem de erro disponível.";
+
           btn.onclick = () => {
-            const msg = falha.errorMessage || "Sem mensagem de erro disponível.";
-            alert(`Erro em "${falha.dataset}":\n\n${msg}`);
+            // Esconde todos os outros detalhes primeiro
+            document.querySelectorAll('.erro-detalhe').forEach(box => {
+              if (box !== erroBox) box.style.display = 'none';
+            });
+
+            erroBox.style.display = erroBox.style.display === 'block' ? 'none' : 'block';
           };
 
-          falhasDiv.appendChild(btn);
+          wrapper.appendChild(btn);
+          wrapper.appendChild(erroBox);
+          falhasDiv.appendChild(wrapper);
         });
 
         // Agrupar por workspace
