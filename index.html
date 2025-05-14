@@ -98,7 +98,6 @@
 
   <div class="painel-falhas" id="painel-falhas">
     <h2>❗ Falhas Críticas</h2>
-    <!-- Aqui entrarão os cards de falhas -->
   </div>
 
   <div id="tabelas-container"></div>
@@ -109,38 +108,37 @@
       const json = await response.json();
       const dados = json.data;
 
-      // Formatando a data de coleta
       document.getElementById("ultima-coleta").textContent = "Última coleta da API: " + json.ultimaColeta;
 
       const painelFalhas = document.getElementById("painel-falhas");
       const container = document.getElementById("tabelas-container");
       const workspaces = {};
 
-      // Separar falhas e agrupar por workspace
       dados.forEach(item => {
-        if (!workspaces[item.workspace]) {
-          workspaces[item.workspace] = [];
-        }
-        workspaces[item.workspace].push(item);
+        const nomeWorkspace = item.workspace.trim();
 
-        // Criar cartão de falha
+        if (!workspaces[nomeWorkspace]) {
+          workspaces[nomeWorkspace] = [];
+        }
+        workspaces[nomeWorkspace].push(item);
+
         if (item.status === "Failed") {
           const div = document.createElement("div");
           div.className = "falha-item";
           div.innerHTML = `
-              <strong>Workspace:</strong> ${item.workspace}<br>
-              <strong>Tipo:</strong> ${item.type}<br>
-              <strong>Dataset:</strong> ${item.dataset}<br>
-              <strong>Status:</strong> <span class="status-failed">${item.status}</span><br>
-              <strong>Início:</strong> ${item.start_time || "-"}<br>
-              <strong>Fim:</strong> ${item.end_time || "-"}
+            <strong>Workspace:</strong> ${nomeWorkspace}<br>
+            <strong>Tipo:</strong> ${item.type}<br>
+            <strong>Dataset:</strong> ${item.dataset}<br>
+            <strong>Status:</strong> <span class="status-failed">${item.status}</span><br>
+            <strong>Início:</strong> ${item.start_time || "-"}<br>
+            <strong>Fim:</strong> ${item.end_time || "-"}
           `;
-
           painelFalhas.appendChild(div);
         }
       });
 
-      // Tabelas por workspace
+      console.log("Dados agrupados por workspace:", workspaces);
+
       for (const [workspace, elementos] of Object.entries(workspaces)) {
         const titulo = document.createElement("h2");
         titulo.textContent = workspace;
@@ -148,32 +146,34 @@
 
         const tabela = document.createElement("table");
         tabela.innerHTML = `
-  <thead>
-    <tr>
-      <th>Nome</th>
-      <th>Tipo</th>
-      <th>Status</th>
-      <th>Início</th>
-      <th>Fim</th>
-      <th>Duração</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${elementos
-      .map(item => `
-        <tr class="${item.status === "Failed" ? "linha-falha" : ""}">
-          <td>${item.dataset}</td>
-          <td class="${item.type === "Semantic Model" ? "type-semantic" : "type-dataflow"}">${item.type}</td>
-          <td class="${item.status === "Failed" ? "status-failed" : "status-completed"}">${item.status}</td>
-          <td>${item.start_time || "-"}</td>
-          <td>${item.end_time || "-"}</td>
-          <td>${item.duration || "-"}</td>
-        </tr>
-      `)
-      .join("")}
-  </tbody>
-`;
-
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Tipo</th>
+              <th>Status</th>
+              <th>Início</th>
+              <th>Fim</th>
+              <th>Duração</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${elementos
+              .map(item => {
+                console.log("Renderizando:", item);
+                return `
+                  <tr class="${item.status === "Failed" ? "linha-falha" : ""}">
+                    <td>${item.dataset}</td>
+                    <td class="${item.type === "Semantic Model" ? "type-semantic" : "type-dataflow"}">${item.type}</td>
+                    <td class="${item.status === "Failed" ? "status-failed" : "status-completed"}">${item.status}</td>
+                    <td>${item.start_time || "-"}</td>
+                    <td>${item.end_time || "-"}</td>
+                    <td>${item.duration || "-"}</td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        `;
         container.appendChild(tabela);
       }
     }
