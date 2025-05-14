@@ -56,7 +56,7 @@
   <script>
     async function carregarDados() {
       try {
-        const resposta = await fetch('https://seudominio.com/status.json');
+        const resposta = await fetch('https://gen-backend-mx52.onrender.com/status');
         if (!resposta.ok) throw new Error("Erro ao carregar API: " + resposta.status);
 
         const json = await resposta.json();
