@@ -127,14 +127,15 @@
         if (item.status === "Failed") {
           const div = document.createElement("div");
           div.className = "falha-item";
-          div.innerHTML = 
-            <strong>Workspace:</strong> ${item.workspace}<br>
-            <strong>Tipo:</strong> ${item.type}<br>
-            <strong>Dataset:</strong> ${item.dataset}<br>
-            <strong>Status:</strong> <span class="status-failed">${item.status}</span><br>
-            <strong>Início:</strong> ${item.start_time || "-"}<br>
-            <strong>Fim:</strong> ${item.end_time || "-"}
-          ;
+          div.innerHTML = `
+              <strong>Workspace:</strong> ${item.workspace}<br>
+              <strong>Tipo:</strong> ${item.type}<br>
+              <strong>Dataset:</strong> ${item.dataset}<br>
+              <strong>Status:</strong> <span class="status-failed">${item.status}</span><br>
+              <strong>Início:</strong> ${item.start_time || "-"}<br>
+              <strong>Fim:</strong> ${item.end_time || "-"}
+          `;
+
           painelFalhas.appendChild(div);
         }
       });
@@ -146,32 +147,33 @@
         container.appendChild(titulo);
 
         const tabela = document.createElement("table");
-        tabela.innerHTML = 
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Tipo</th>
-              <th>Status</th>
-              <th>Início</th>
-              <th>Fim</th>
-              <th>Duração</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${elementos
-              .map(item => 
-                <tr class="${item.status === "Failed" ? "linha-falha" : ""}">
-                  <td>${item.dataset}</td>
-                  <td class="${item.type === "Semantic Model" ? "type-semantic" : "type-dataflow"}">${item.type}</td>
-                  <td class="${item.status === "Failed" ? "status-failed" : "status-completed"}">${item.status}</td>
-                  <td>${item.start_time || "-"}</td>
-                  <td>${item.end_time || "-"}</td>
-                  <td>${item.duration || "-"}</td>
-                </tr>
-              )
-              .join("")}
-          </tbody>
-        ;
+        tabela.innerHTML = `
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Tipo</th>
+      <th>Status</th>
+      <th>Início</th>
+      <th>Fim</th>
+      <th>Duração</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${elementos
+      .map(item => `
+        <tr class="${item.status === "Failed" ? "linha-falha" : ""}">
+          <td>${item.dataset}</td>
+          <td class="${item.type === "Semantic Model" ? "type-semantic" : "type-dataflow"}">${item.type}</td>
+          <td class="${item.status === "Failed" ? "status-failed" : "status-completed"}">${item.status}</td>
+          <td>${item.start_time || "-"}</td>
+          <td>${item.end_time || "-"}</td>
+          <td>${item.duration || "-"}</td>
+        </tr>
+      `)
+      .join("")}
+  </tbody>
+`;
+
         container.appendChild(tabela);
       }
     }
