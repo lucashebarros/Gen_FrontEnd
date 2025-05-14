@@ -110,7 +110,17 @@
       const dados = json.data;
 
       // Formatando a data de coleta
-      document.getElementById("ultima-coleta").textContent = "Última coleta da API: " + (data.ultimaColeta || "N/A");
+      const dataUTC = new Date(json.ultimaColeta);
+      const dataLocal = new Date(dataUTC.getTime() + 0 * 60 * 60 * 1000);
+      const dataFormatada = dataLocal.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      document.getElementById("ultima-coleta").textContent = "Última coleta da API: " + dataFormatada;
 
       const painelFalhas = document.getElementById("painel-falhas");
       const container = document.getElementById("tabelas-container");
@@ -127,14 +137,14 @@
         if (item.status === "Failed") {
           const div = document.createElement("div");
           div.className = "falha-item";
-          div.innerHTML = `
+          div.innerHTML = 
             <strong>Workspace:</strong> ${item.workspace}<br>
             <strong>Tipo:</strong> ${item.type}<br>
             <strong>Dataset:</strong> ${item.dataset}<br>
             <strong>Status:</strong> <span class="status-failed">${item.status}</span><br>
             <strong>Início:</strong> ${item.start_time || "-"}<br>
             <strong>Fim:</strong> ${item.end_time || "-"}
-          `;
+          ;
           painelFalhas.appendChild(div);
         }
       });
@@ -146,7 +156,7 @@
         container.appendChild(titulo);
 
         const tabela = document.createElement("table");
-        tabela.innerHTML = `
+        tabela.innerHTML = 
           <thead>
             <tr>
               <th>Nome</th>
@@ -159,7 +169,7 @@
           </thead>
           <tbody>
             ${elementos
-              .map(item => `
+              .map(item => 
                 <tr class="${item.status === "Failed" ? "linha-falha" : ""}">
                   <td>${item.dataset}</td>
                   <td class="${item.type === "Semantic Model" ? "type-semantic" : "type-dataflow"}">${item.type}</td>
@@ -168,10 +178,10 @@
                   <td>${item.end_time || "-"}</td>
                   <td>${item.duration || "-"}</td>
                 </tr>
-              `)
+              )
               .join("")}
           </tbody>
-        `;
+        ;
         container.appendChild(tabela);
       }
     }
