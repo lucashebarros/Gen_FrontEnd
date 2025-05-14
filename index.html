@@ -5,50 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Status dos Dashboards</title>
   <style>
-    h1 {
-      text-align: center;
-    }
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       background-color: #f4f4f4;
     }
+
     h1 {
+      text-align: center;
       margin-bottom: 20px;
     }
+
     .falhas-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 20px;
       justify-content: center;
       margin-bottom: 30px;
     }
+
     .falha-wrapper {
       text-align: center;
       position: relative;
+      width: 130px;
     }
-    .falha-botao {
-  border: none;
-  border-radius: 12px;
-  width: 100px;
-  height: 100px;
-  background-color: #f44336;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 10px;
-  word-break: break-word;
-}
 
-    .falha-botao:hover {
-      transform: scale(1.1);
+    .falha-circulo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: #f44336;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      word-break: break-word;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+      cursor: default;
     }
+
+    .falha-circulo:hover {
+      transform: scale(1.05);
+    }
+
+    .btn-toggle {
+      margin-top: 8px;
+      font-size: 12px;
+      padding: 4px 8px;
+      background-color: #555;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-toggle:hover {
+      background-color: #333;
+    }
+
     .erro-detalhe {
       display: none;
       margin-top: 8px;
@@ -57,47 +74,54 @@
       padding: 10px;
       border-radius: 8px;
       font-size: 14px;
-      max-width: 200px;
       border: 1px solid #f5c2c7;
-      position: absolute;
-      top: 90px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1;
+      text-align: left;
+      word-wrap: break-word;
+      white-space: normal;
     }
+
     h2 {
       margin-top: 40px;
       border-bottom: 2px solid #ccc;
       padding-bottom: 5px;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 30px;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 8px;
       text-align: left;
     }
+
     th {
       background-color: #eee;
     }
+
     .status-Completed {
       background-color: #d4edda;
     }
+
     .status-Failed {
       background-color: #f8d7da;
     }
+
     .status-Disabled {
       background-color: #fff3cd;
     }
+
     .status-Desconhecido {
       background-color: #e2e3e5;
     }
+
     .loading {
       font-weight: bold;
     }
+
     .error {
       color: red;
       font-weight: bold;
@@ -125,30 +149,31 @@
         contentDiv.innerHTML = '';
         falhasDiv.innerHTML = '';
 
-        // Mostrar falhas como círculos clicáveis com tooltip abaixo
+        // Mostrar falhas como círculos com botão para ver detalhes
         dados.filter(d => d.status === "Failed").forEach(falha => {
           const wrapper = document.createElement('div');
           wrapper.className = 'falha-wrapper';
 
-          const btn = document.createElement('button');
-          btn.className = 'falha-botao';
-          btn.textContent = falha.dataset?.slice(0, 6) || 'Falha';
-          btn.title = falha.dataset;
+          const circle = document.createElement('div');
+          circle.className = 'falha-circulo';
+          circle.textContent = falha.dataset?.slice(0, 6) || 'Falha';
+          circle.title = falha.dataset;
+
+          const toggleBtn = document.createElement('button');
+          toggleBtn.className = 'btn-toggle';
+          toggleBtn.textContent = 'Ver erro';
 
           const erroBox = document.createElement('div');
           erroBox.className = 'erro-detalhe';
           erroBox.textContent = falha.errorMessage || "Sem mensagem de erro disponível.";
 
-          btn.onclick = () => {
-            // Esconde todos os outros detalhes primeiro
-            document.querySelectorAll('.erro-detalhe').forEach(box => {
-              if (box !== erroBox) box.style.display = 'none';
-            });
-
+          toggleBtn.onclick = () => {
             erroBox.style.display = erroBox.style.display === 'block' ? 'none' : 'block';
+            toggleBtn.textContent = erroBox.style.display === 'block' ? 'Ocultar erro' : 'Ver erro';
           };
 
-          wrapper.appendChild(btn);
+          wrapper.appendChild(circle);
+          wrapper.appendChild(toggleBtn);
           wrapper.appendChild(erroBox);
           falhasDiv.appendChild(wrapper);
         });
